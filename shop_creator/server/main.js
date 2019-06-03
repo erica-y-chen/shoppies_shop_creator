@@ -1,29 +1,29 @@
 import { Meteor } from 'meteor/meteor';
-import Links from '/imports/api/links';
+import Products from '/imports/api/products';
 
-function insertLink(title, url) {
-  Links.insert({ title, url, createdAt: new Date() });
+function insertProduct(title, url) {
+  Products.insert({ title, url, createdAt: new Date() });
 }
 
 Meteor.startup(() => {
-  // If the Links collection is empty, add some data.
-  if (Links.find().count() === 0) {
-    insertLink(
+  // If the Products collection is empty, add some data.
+  if (Products.find().count() === 0) {
+    insertProduct(
       'Do the Tutorial',
       'https://www.meteor.com/tutorials/react/creating-an-app'
     );
 
-    insertLink(
+    insertProduct(
       'Follow the Guide',
       'http://guide.meteor.com'
     );
 
-    insertLink(
+    insertProduct(
       'Read the Docs',
       'https://docs.meteor.com'
     );
 
-    insertLink(
+    insertProduct(
       'Discussions',
       'https://forums.meteor.com'
     );
