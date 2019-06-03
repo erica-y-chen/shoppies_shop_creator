@@ -27,7 +27,8 @@ export default class App extends Component {
     return (
       <div className="container">
         <header>
-          <h1>Welcome to Shoppies!</h1>
+          <img id="hashtag-shoppies" />
+          <h1>Empowering content creators to own their own brand</h1>
         </header>
 
         <ul>
@@ -37,5 +38,3 @@ export default class App extends Component {
     );
   }
 }
-
-
