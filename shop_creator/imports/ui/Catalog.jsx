@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import Products from '../api/products';
+import Products from '../api/products.js';
 
-class Info extends Component {
+class Catalog extends Component {
   render() {
-    const links = this.props.links.map(
-      link => this.makeProduct(product)
+    const products = this.props.products.map(
+      product => this.makeProduct(product)
     );
 
     return (
       <div>
-        <h2>Learn Meteor!</h2>
         <ul>{ products }</ul>
       </div>
     );
   }
 
-  makeLink(link) {
+  makeProduct(product) {
     return (
       <li key={product._id}>
         <a href={product.url} target="_blank">{product.title}</a>
@@ -25,8 +24,8 @@ class Info extends Component {
   }
 }
 
-export default InfoContainer = withTracker(() => {
+export default ProductContainer = withTracker(() => {
   return {
-    links: Products.find().fetch(),
+    products: Products.find().fetch(),
   };
-})(Info);
+})(Catalog);

@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 import Product from './Product.jsx';
+import Catalog from './Catalog.jsx';
 
 // import Hello from './Hello.jsx';
-// import Catalog from './Catalog.jsx';
 // <Hello />
-// <Info />
 
 // App component - represents the whole app
 export default class App extends Component {
-  getProducts() {
-    return [
-      { _id: 1, text: 'This is product 1' },
-      { _id: 2, text: 'This is product 2' },
-      { _id: 3, text: 'This is product 3' },
-    ];
-  }
+  handleSubmit(event) {
+    event.preventDefault();
 
-  renderProducts() {
-    return this.getProducts().map((product) => (
-      <Product key={product._id} product={product} />
-    ));
-  }
+    // Find the text field via the React ref
+    const title = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
 
+    Products.insert({
+      title,
+      url: "#"
+    });
+
+    // Clear form
+    ReactDOM.findDOMNode(this.refs.textInput).value = '';
+  }
   render() {
     return (
       <div className="container">
@@ -30,10 +30,14 @@ export default class App extends Component {
           <img id="hashtag-shoppies" />
           <h1>Empowering content creators to own their own brand</h1>
         </header>
-
-        <ul>
-          {this.renderProducts()}
-        </ul>
+        <Catalog />
+        <form className="new-product" onSubmit={this.handleSubmit.bind(this)} >
+          <input
+            type="text"
+            ref="textInput"
+            placeholder="Type to add new products"
+          />
+        </form>
       </div>
     );
   }

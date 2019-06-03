@@ -93,6 +93,11 @@ li {
   padding: 15px;
   border-bottom: rgba(255, 255, 255, 0.2) solid 1px;
 }
+
+li a {
+  color: white;
+  text-decoration: none;
+}
  
 li .text {
   margin-left: 10px;
