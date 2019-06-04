@@ -4,9 +4,6 @@ import ReactDOM from 'react-dom';
 import Product from './Product.jsx';
 import Catalog from './Catalog.jsx';
 
-// import Hello from './Hello.jsx';
-// <Hello />
-
 // App component - represents the whole app
 export default class App extends Component {
   handleSubmit(event) {

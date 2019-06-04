@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import Products from '../api/products.js';
+import Products from '/imports/api/products.js';
+import Product from '/imports/ui/Product.jsx'
 
 class Catalog extends Component {
   render() {
@@ -17,14 +18,12 @@ class Catalog extends Component {
 
   makeProduct(product) {
     return (
-      <li key={product._id}>
-        <a href={product.url} target="_blank">{product.title}</a>
-      </li>
+      <Product key={product._id} product={product}/>
     );
   }
 }
 
-export default ProductContainer = withTracker(() => {
+export default Catalog = withTracker(() => {
   return {
     products: Products.find().fetch(),
   };
