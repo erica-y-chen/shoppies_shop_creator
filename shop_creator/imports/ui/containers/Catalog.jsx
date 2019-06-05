@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import Products from '/imports/api/products.js';
-import Product from '/imports/ui/Product.jsx'
+import Product from '/imports/ui/components/Product.jsx'
 
 class Catalog extends Component {
   render() {
