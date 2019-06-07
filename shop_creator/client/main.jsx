@@ -7,55 +7,77 @@ import { AccountsReactComponent } from 'meteor/meteoreact:accounts'
 import "./lib/semantic-ui/semantic.less";
 
 import { renderRoutes } from '/imports/startup/client/routes.js';
+import App from '/imports/ui/containers/App.jsx'
 
 Meteor.startup(() => {
   AccountsReact.configure({defaultState: 'signUp'});
   /*
-  • Collect required data from potential shop creators, so we can validate if we want them
-  • checkbox with T&C (submit not working until it is checked)
-  • email, mobile number
-  • instagram account (or other social media)
-  • screenshot of their insights
+  √ checkbox with T&C (submit not working until it is checked) (add modal to show terms)
+  √ email
+  √ mobile number
+  √ instagram account (or other social media) (add icon)
+  √ youtube (add icon) (either this or instagram is required)
+  • screenshot of their insights "Please attach screenshots of your audience insights" (optional)
   • survey questions
   • submit button that goes to thank you page
-  • log all these data to spreadsheet
-  • account creation (password)
-  • facebook auth, google auth (nice to have but not requried)
+  • log all these data to spreadsheet/db --> we need admin tools
+  √ account creation (password)
+  • facebook auth, google auth (nice to have but not required)
+  • log location, platform, what else?
   */
   AccountsReact.addFields('signUp', [
     {
-      _id: 'someFukkinField',
-      displayName: 'Something Wonderous',
-      placeholder: 'You need to add this info',
-      minLength: 4,
-      maxLength: 70,
+      _id: 'mobileNumber',
+      displayName: 'Mobile Number',
+      placeholder: '+1 234-567-8910',
+      minLength: 10, // we need custom validation
+      maxLength: 20, // this is not correct
       required: true,
-      errStr: 'This field must contain at least 4 characters and no more than 70',
-      autocomplete: 'does this matter?'
+      errStr: 'Please enter a valid mobile number.',
+      autocomplete: 'false'
     },
     {
-      _id: 'someOtherFukkinField',
-      displayName: 'Something Else',
-      placeholder: 'You need to add this info',
-      minLength: 4,
-      maxLength: 70,
+      _id: 'instagramAccount',
+      displayName: 'Instagram Account',
+      placeholder: '@shoppies4life',
+      minLength: 2,
+      maxLength: 31,
+      required: false,
+      errStr: 'Please enter a valid instagram handle.',
+      autocomplete: 'false'
+    },
+    {
+      _id: 'youtubeAccount',
+      displayName: 'YouTube Account',
+      placeholder: '@shoppiesFTW',
+      minLength: 2,
+      maxLength: 31,
+      required: false,
+      errStr: 'Please enter a valid youtube handle.',
+      autocomplete: 'false'
+    },
+    {
+      _id: 'agreesToTerms',
+      displayName: 'Shoppies Terms of Service',
+      minLength: 2,
+      maxLength: 31,
       required: true,
-      errStr: 'This field must contain at least 4 characters and no more than 70',
-      autocomplete: 'nothing matters',
-      type: 'radio',
-      label: 'but why?',
+      errStr: 'You need to agree to the terms of service to proceed.',
+      autocomplete: 'false',
+      type: 'checkbox',
+      label: 'Shoppies Terms of Service',
       options: [
-        {value: 'yep', text: 'Yes, indeed!'},
-        {value: 'maybe', text: 'Not impossible.'},
-        {value: 'nope', text: 'Rather not.'}
-       ]
+        {value: 'true', text: 'Agree'},
+        {value: 'false', text: 'Decline'}
+      ]
     }
   ]);
+  // I have read and agree to the Shoppies <a href="#modal_tos">Terms and Conditions</a>
   arState = ({ match, history }) => {
     const { path, params } = match
 
-    // Cant change password if not logged in.
-    if (path == '/change-password' && !Meteor.userId()) {
+    // Can't change password if not logged in.
+    if (path === '/change-password' && !Meteor.userId()) {
       return (<Redirect to='/' />)
     }
 
@@ -67,5 +89,6 @@ Meteor.startup(() => {
       />
     )
   }
+  <App />
   render(renderRoutes(), document.getElementById('react-target'));
 });

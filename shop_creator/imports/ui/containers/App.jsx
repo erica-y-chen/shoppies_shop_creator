@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import Header from '/imports/ui/components/Header.jsx';
 
 import Catalog from '/imports/ui/containers/Catalog.jsx';
 import ProductForm from '/imports/ui/components/ProductForm.jsx';
@@ -9,10 +9,7 @@ export default class App extends Component {
   render() {
     return (
       <div className="container">
-        <header>
-          <img id="hashtag-shoppies" />
-          <h1>Empowering content creators to own their own brand</h1>
-        </header>
+        <Header />
         <Catalog />
         <ProductForm />
       </div>
