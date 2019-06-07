@@ -4,6 +4,7 @@ import { render } from 'react-dom';
 import { Redirect } from 'react-router';
 import { AccountsReact } from 'meteor/meteoreact:accounts'
 import { AccountsReactComponent } from 'meteor/meteoreact:accounts'
+import "./lib/semantic-ui/semantic.less";
 
 import { renderRoutes } from '/imports/startup/client/routes.js';
 

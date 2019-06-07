@@ -21,3 +21,5 @@ react-meteor-data       # React higher-order component for reactively tracking M
 accounts-password
 meteoreact:accounts
 meteoreact:accounts-semantic
+semantic:ui
+less
