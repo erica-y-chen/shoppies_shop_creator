@@ -8,8 +8,14 @@ import "./lib/semantic-ui/semantic.less";
 
 import { renderRoutes } from '/imports/startup/client/routes.js';
 import App from '/imports/ui/containers/App.jsx'
+import InputField from '/imports/overrides/InputField.jsx'
 
 Meteor.startup(() => {
+  // Override default styles
+  AccountsReact.style({
+    InputField: InputField
+  });
+  // Set default state for accounts module
   AccountsReact.configure({defaultState: 'signUp'});
   /*
   √ checkbox with T&C (submit not working until it is checked) (add modal to show terms)
@@ -25,6 +31,7 @@ Meteor.startup(() => {
   • facebook auth, google auth (nice to have but not required)
   • log location, platform, what else?
   */
+  // Add custom fields to the accounts module
   AccountsReact.addFields('signUp', [
     {
       _id: 'mobileNumber',
@@ -58,18 +65,15 @@ Meteor.startup(() => {
     },
     {
       _id: 'agreesToTerms',
-      displayName: 'Shoppies Terms of Service',
+      displayName: 'By clicking Register, you agree to the Shoppies Terms of Service.',
       minLength: 2,
       maxLength: 31,
       required: true,
       errStr: 'You need to agree to the terms of service to proceed.',
       autocomplete: 'false',
-      type: 'checkbox',
-      label: 'Shoppies Terms of Service',
-      options: [
-        {value: 'true', text: 'Agree'},
-        {value: 'false', text: 'Decline'}
-      ]
+      type: 'hidden',
+      default: 'true',
+      label: 'Shoppies Terms of Service'
     }
   ]);
   // I have read and agree to the Shoppies <a href="#modal_tos">Terms and Conditions</a>
