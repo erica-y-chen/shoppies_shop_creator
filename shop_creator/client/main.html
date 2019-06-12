@@ -1,5 +1,13 @@
 <head>
   <title>Shoppies.co</title>
+  <script src="//static.filestackapi.com/filestack-js/2.x.x/filestack.min.js"></script>
+  <script>
+    const client = filestack.init('A1ndGsureSIidDUM9t91lz');
+    const options = {
+                      onUploadDone: (res) => console.log(res),
+            };
+    client.picker(options).open();
+  </script>
 </head>
 
 <body>
