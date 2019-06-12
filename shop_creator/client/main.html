@@ -4,12 +4,13 @@
   <script>
     const client = filestack.init('A1ndGsureSIidDUM9t91lz');
     const options = {
-                      onUploadDone: (res) => console.log(res),
-            };
-    client.picker(options).open();
+      onUploadDone: (res) => console.log(res),
+    };
+    // client.picker(options).open();
   </script>
 </head>
 
 <body>
-  <div id="react-target"></div>
+  <div id="main-react-target"></div>
+  <div id="accounts-react-target" class="grid"></div>
 </body>

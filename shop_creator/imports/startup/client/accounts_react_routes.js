@@ -1,17 +1,27 @@
 import React, { Component } from 'react'
 import { Redirect, Router, Route, Switch } from 'react-router'
 import { AccountsReactComponent } from 'meteor/meteoreact:accounts'
-import { createBrowserHistory } from 'history';
 
-const history = createBrowserHistory();
+arState = ({ match, history }) => {
+  const { path, params } = match
 
-// route components
-import App from '/imports/ui/containers/App.jsx'
+  // Can't change password if not logged in.
+  if (path === '/change-password' && !Meteor.userId()) {
+    return (<Redirect to='/' />)
+  }
 
-export const renderRoutes = () => (
+  return (
+      <AccountsReactComponent
+  history={history}
+  route={path}
+  token={params.token} // for the reset-password route
+/>
+)
+}
+
+export const AccountsReactRoutes = (history) => (
   <Router history={history}>
     <Switch>
-      <Route exact path="/" component={App}/>
       <Route exact path="/sign-in" component={arState} />
       <Route exact path='/sign-up' component={arState} />
       <Route exact path='/forgot-password' component={arState} />
