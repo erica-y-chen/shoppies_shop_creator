@@ -20,6 +20,6 @@ import App from '/imports/ui/containers/App.jsx'
 // Client Entry Point
 Meteor.startup(() => {
   AccountsReactConfig();
-  render(<Router history={history}><Route exact path="/" component={App}/></Router>, document.getElementById('main-react-target'));
+  render(<App history={history} />, document.getElementById('main-react-target'));
   render(AccountsReactRoutes(history), document.getElementById('accounts-react-target'));
 });
