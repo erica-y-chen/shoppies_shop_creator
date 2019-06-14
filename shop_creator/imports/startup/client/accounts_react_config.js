@@ -3,13 +3,43 @@ import { AccountsReactComponent } from 'meteor/meteoreact:accounts'
 
 import InputField from '/imports/overrides/InputField.jsx'
 
+import { HTTP } from 'meteor/http'
+
 export const AccountsReactConfig = () => {
-    // Override default styles
+    // AccountReact Overrides
     AccountsReact.style({
         InputField: InputField
     });
+    // AccountsReact Hooks
+    const onLogoutHook = () => {
+        // A good use case will be to redirect the user somewhere
+    }
+
+    const onSubmitHook = (err, state) => {
+        if (!err) {
+            if (state === 'signIn') {
+                //
+            }
+            if (state === 'signUp') {
+                //
+            }
+        }
+    }
+
+    const preSignupHook = (password, info) => {
+        var device_info = window.navigator.userAgent;
+        var display_size = screen.width + 'x' + screen.height;
+        info = Object.assign({location: Meteor.settings.public.location_data}, info)
+        console.log(info);
+        return info;
+    }
     // Set default state for accounts module
-    AccountsReact.configure({defaultState: 'signUp'});
+    AccountsReact.configure({
+        defaultState: 'signUp',
+        onLogoutHook,
+        onSubmitHook,
+        preSignupHook
+    });
     /*
      √ checkbox with T&C (submit not working until it is checked) (add modal to show terms)
      √ email
@@ -55,19 +85,20 @@ export const AccountsReactConfig = () => {
             required: false,
             errStr: 'Please enter a valid youtube handle.',
             autocomplete: 'false'
-        },
-        {
-            _id: 'agreesToTerms',
-            displayName: 'By clicking Register, you agree to the Shoppies Terms of Service.',
-            minLength: 2,
-            maxLength: 31,
-            required: true,
-            errStr: 'You need to agree to the terms of service to proceed.',
-            autocomplete: 'false',
-            type: 'hidden',
-            default: 'true',
-            label: 'Shoppies Terms of Service'
         }
     ]);
+    /*
+    {
+        _id: 'audienceInsightsImage',
+            displayName: 'Audience Insights',
+        minLength: 2,
+        maxLength: 31,
+        required: true,
+        errStr: 'You need to agree to the terms of service to proceed.',
+        autocomplete: 'false',
+        type: 'hidden',
+        label: 'Audience Insights'
+    }
+    */
     // I have read and agree to the Shoppies <a href="#modal_tos">Terms and Conditions</a>
 };
