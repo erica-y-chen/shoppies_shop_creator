@@ -1,15 +1,9 @@
-import { AccountsReact } from 'meteor/meteoreact:accounts'
-import { AccountsReactComponent } from 'meteor/meteoreact:accounts'
-
-import InputField from '/imports/overrides/InputField.jsx'
+import { AccountsReact } from 'meteor/day:accounts-react'
+import { AccountsReactComponent } from 'meteor/day:accounts-react'
 
 import { HTTP } from 'meteor/http'
 
 export const AccountsReactConfig = () => {
-    // AccountReact Overrides
-    AccountsReact.style({
-        InputField: InputField
-    });
     // AccountsReact Hooks
     const onLogoutHook = () => {
         // A good use case will be to redirect the user somewhere

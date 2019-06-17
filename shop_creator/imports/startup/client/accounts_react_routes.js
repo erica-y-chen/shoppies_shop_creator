@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Redirect, Router, Route, Switch } from 'react-router'
-import { AccountsReactComponent } from 'meteor/meteoreact:accounts'
+import { AccountsReactComponent } from 'meteor/day:accounts-react'
 
 arState = ({ match, history }) => {
   const { path, params } = match

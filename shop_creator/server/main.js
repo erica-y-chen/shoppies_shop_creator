@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { AccountsReact } from 'meteor/meteoreact:accounts'
+import { AccountsReact } from 'meteor/day:accounts-react'
 import Products from '/imports/api/products';
 
 Meteor.startup(() => {
