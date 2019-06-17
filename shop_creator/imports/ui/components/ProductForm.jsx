@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom'
 
 // ProductForm component - add a new product
 export default class ProductForm extends Component {
