@@ -21,19 +21,17 @@ export const AccountsReactConfig = () => {
     }
 
     const preSignupHook = (password, info) => {
-        var device_info = window.navigator.userAgent;
-        var display_size = screen.width + 'x' + screen.height;
-        info = Object.assign({location: Meteor.settings.public.location_data}, info)
-        console.log(info);
-        return info;
+        //
     }
+
     // Set default state for accounts module
     AccountsReact.configure({
         defaultState: 'signUp',
+        logUserMetaData: true,
         onLogoutHook,
         onSubmitHook,
         preSignupHook
-    });
+});
     /*
      √ checkbox with T&C (submit not working until it is checked) (add modal to show terms)
      √ email
