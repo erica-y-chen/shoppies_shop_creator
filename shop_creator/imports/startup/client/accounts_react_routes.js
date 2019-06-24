@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect, Router, Route, Switch } from 'react-router'
 import { AccountsReactComponent } from 'meteor/day:accounts-react'
+import FileStack from '/imports/ui/components/FileStack.jsx'
 
 arState = ({ match, history }) => {
   const { path, params } = match
@@ -29,5 +30,12 @@ export const AccountsReactRoutes = (history) => (
       <Route exact path='/reset-password/:token' component={arState} />
       <Route exact path='/resend-verification' component={arState} />
     </Switch>
+    <Route
+      exact path='/sign-up'
+      render={(props) =>
+        <FileStack
+          {...props}
+        />}
+    />
   </Router>
 );
