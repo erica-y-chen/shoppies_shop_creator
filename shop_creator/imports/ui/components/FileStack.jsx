@@ -9,7 +9,7 @@ class FileStack extends Component {
         componentDisplayMode: {
             type: 'button',
             customText: 'Pick File',
-            customClass: 'filestack-js'
+            customClass: ''
         },
         actionOptions: {},
         onSuccess: result => console.log(result),
@@ -187,11 +187,11 @@ class FileStack extends Component {
                 <Tag
                     name={fieldName}
                     onClick={this.onClickPick}
-                    className={customClass}
+                    className={"filestack " + customClass}
                 >
                     {customText}
                 </Tag>
-                <img id={fieldName + "Thumbnail"} src="" className="filestackThumbnail" />
+                <img id={fieldName + "Thumbnail"} src="" className={"filestack thumbnail"} />
                 </div>
             );
         }

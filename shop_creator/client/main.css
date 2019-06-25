@@ -1,10 +1,15 @@
 /* Override SUI Styles */
 .ui.form {
   margin: 40px;
+  margin-bottom: 20px;
 }
 
 .ui.large.header {
   color: white;
+}
+
+.ui.button {
+  margin-top: 20px;
 }
 
 .signIn-link {
@@ -12,10 +17,17 @@
   margin-left: 40px;
 }
 
-.filestackThumbnail {
+/* Styles for FileStack */
+
+.filestack.button {
+  margin-left: 40px;
+  margin-bottom: 40px;
+}
+
+.filestack.thumbnail {
   height: 35px;
   vertical-align: bottom;
-  margin-bottom: -1px;
+  margin-bottom: 40px;
 }
 
 /* CSS declarations go here */
@@ -49,6 +61,7 @@ header {
   background: transparent;
   padding: 20px 15px 15px 15px;
   position: relative;
+  text-align: center;
 }
 
 #login-buttons {
@@ -62,10 +75,9 @@ header {
 }
 
 h1 {
-  font-size: 1.2rem;
+  font-size: 0.9em;
   font-weight: 100;
   margin: 0;
-  margin-left: -8px;
   margin-bottom: 10px;
   display: inline-block;
 }
