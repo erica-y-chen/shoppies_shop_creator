@@ -35,6 +35,14 @@ export const AccountsReactRoutes = (history) => (
       render={(props) =>
         <FileStack
           {...props}
+          apiKeyMethod={'getFileStackAPIKey'}
+          fieldName={'audienceInsights'}
+          componentDisplayMode={{
+            type: 'button',
+            customText: 'Upload audience insights image',
+            customClass: 'ui button'
+          }}
+          onSuccess={(res, fieldName) => { this.document.getElementById(fieldName + 'Thumbnail').src = res.filesUploaded[0].url }}
         />}
     />
   </Router>

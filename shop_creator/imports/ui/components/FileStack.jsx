@@ -5,10 +5,11 @@ import PropTypes from 'prop-types';
 class FileStack extends Component {
     static defaultProps = {
         action: 'pick',
+        fieldName: 'filestack',
         componentDisplayMode: {
             type: 'button',
-            customText: 'Pick file',
-            customClass: 'ui button',
+            customText: 'Pick File',
+            customClass: 'filestack-js'
         },
         actionOptions: {},
         onSuccess: result => console.log(result),
@@ -42,18 +43,23 @@ class FileStack extends Component {
     constructor(props) {
         super(props);
         const {
+            apiKeyMethod,
             clientOptions,
             actionOptions,
-            action,
+            action
             } = this.props;
-        const client = filestack.init(Meteor.settings.public.fileStackAPIKey, clientOptions);
-        this.state = {
-            client,
-            picker: action === 'pick' ? client.picker({ ...actionOptions, onUploadDone: this.onFinished }) : null,
-        };
 
-        this.onFinished = this.onFinished.bind(this);
-        this.onFail = this.onFail.bind(this);
+        const fileStackObj = this;
+        Meteor.call(apiKeyMethod, (err, apiKey) => {
+            const client = filestack.init(apiKey, clientOptions);
+            fileStackObj.state = {
+                client,
+                picker: action === 'pick' ? client.picker({ ...actionOptions, onUploadDone: fileStackObj.onFinished }) : null,
+            };
+
+            fileStackObj.onFinished = fileStackObj.onFinished.bind(fileStackObj);
+            fileStackObj.onFail = fileStackObj.onFail.bind(fileStackObj);
+        });
     }
 
     componentWillMount () {
@@ -69,7 +75,7 @@ class FileStack extends Component {
     }
 
     componentDidMount () {
-        console.log("FileStack component mounted.");
+        // console.log("FileStack component mounted.");
     }
 
     componentWillUnmount() {
@@ -102,9 +108,11 @@ class FileStack extends Component {
      * @param {object} result - A promise result object
      */
     onFinished = (result) => {
-        const { onSuccess } = this.props;
+        const { onSuccess, fieldName } = this.props;
+        if (!Meteor.settings.public.filestack) {Meteor.settings.public.filestack = {}}
         if (typeof onSuccess === 'function' && result) {
-            onSuccess(result);
+            Meteor.settings.public.filestack[fieldName] = result;
+            onSuccess(result, fieldName);
         }
     };
 
@@ -159,7 +167,7 @@ class FileStack extends Component {
 
     render () {
         const {
-            customRender: CustomRender, componentDisplayMode: { type, customText, customClass },
+            customRender: CustomRender, componentDisplayMode: { type, customText, customClass }, fieldName
             } = this.props;
         if (CustomRender) {
             return (
@@ -175,14 +183,16 @@ class FileStack extends Component {
             const Tag = tagMap[type];
 
             return (
+                <div>
                 <Tag
-                    name="filestack"
-                    ref="test"
+                    name={fieldName}
                     onClick={this.onClickPick}
                     className={customClass}
                 >
                     {customText}
                 </Tag>
+                <img id={fieldName + "Thumbnail"} src="" className="filestackThumbnail" />
+                </div>
             );
         }
     }

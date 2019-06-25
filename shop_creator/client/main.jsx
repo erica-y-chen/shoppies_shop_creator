@@ -19,7 +19,6 @@ import App from '/imports/ui/containers/App.jsx'
 
 // Client Entry Point
 Meteor.startup(() => {
-  console.log("FileStack API Key: " + Meteor.call('getFileStackAPIKey'));
   AccountsReactConfig();
   render(<App history={history} />, document.getElementById('main-react-target'));
   render(AccountsReactRoutes(history), document.getElementById('accounts-react-target'));

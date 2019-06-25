@@ -12,6 +12,12 @@
   margin-left: 40px;
 }
 
+.filestackThumbnail {
+  height: 35px;
+  vertical-align: bottom;
+  margin-bottom: -1px;
+}
+
 /* CSS declarations go here */
 body {
   font-family: sans-serif;
