@@ -109,9 +109,9 @@ class FileStack extends Component {
      */
     onFinished = (result) => {
         const { onSuccess, fieldName } = this.props;
-        if (!Meteor.settings.public.filestack) {Meteor.settings.public.filestack = {}}
+        if (!Meteor.settings.public.userFileStack) {Meteor.settings.public.userFileStack = {}}
         if (typeof onSuccess === 'function' && result) {
-            Meteor.settings.public.filestack[fieldName] = result;
+            Meteor.settings.public.userFileStack[fieldName] = result;
             onSuccess(result, fieldName);
         }
     };

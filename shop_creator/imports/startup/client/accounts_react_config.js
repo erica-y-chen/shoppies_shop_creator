@@ -28,6 +28,7 @@ export const AccountsReactConfig = () => {
     AccountsReact.configure({
         defaultState: 'signUp',
         logUserMetaData: true,
+        enableFileStack: true,
         onLogoutHook,
         onSubmitHook,
         preSignupHook
