@@ -30,6 +30,34 @@
   margin-bottom: 40px;
 }
 
+/* Styles for Brand Customization */
+
+#brand {
+  position: relative;
+  z-index: 9;
+  text-align: center;
+}
+
+#overlay {
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+}
+
+.brand.template {
+  position: relative;
+  width: 400px;
+  top: 0;
+  left: 0;
+}
+
+.brand.overlay {
+  width: 36px;
+  height: 158px;
+  top: 203px;
+  left: 235px;
+}
+
 /* CSS declarations go here */
 body {
   font-family: sans-serif;
