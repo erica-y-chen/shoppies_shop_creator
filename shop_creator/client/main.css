@@ -32,39 +32,53 @@
 
 /* Styles for Brand Customization */
 
+#brandTemplate {
+  position: absolute;
+  z-index: 9;
+  width: 500px;
+  top: 0;
+  left: 0;
+}
+
 #brand {
   position: relative;
-  z-index: 9;
+  width: 500px;
+  height: 500px;
+  padding: 0px;
+  margin: 20px;
+  display: block;
   text-align: center;
+  overflow: hidden;
 }
 
 #patternOverlay {
   position: absolute;
   z-index: 10;
   text-align: center;
-  opacity: 0.8;
-}
-
-#logoOverlay {
-  position: absolute;
-  z-index: 10;
-  text-align: center;
-  opacity: 1.0;
-}
-
-.brand.template {
-  position: relative;
-  width: 400px;
+  opacity: 0.7;
+  display: inline-block;
   top: 0;
   left: 0;
 }
 
-.brand.overlay {
-  border: none;
-  width: 36px;
-  height: 158px;
-  top: 203px;
-  left: 235px;
+#logoOverlay {
+  position: absolute;
+  z-index: 11;
+  text-align: center;
+  opacity: 0.8;
+  display: inline-block;
+  top: 0;
+  left: 0;
+}
+
+#brandMask {
+  pointer-events: none;
+  position: absolute;
+  z-index: 12;
+  display: inline-block;
+  width: 500px;
+  top: 0;
+  left: 0;
 }
 
 /* CSS declarations go here */
@@ -73,17 +87,13 @@ body {
   background-color: #ffa545;
   background-image: linear-gradient(to bottom left, #ffa545, #dc1149, #96007a);
   background-attachment: fixed;
-
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-
   padding: 0;
   margin: 0;
-
-  font-size: 14px;
 }
 
 .container {

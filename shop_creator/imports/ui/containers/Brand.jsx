@@ -45,6 +45,7 @@ export default class Brand extends Component {
             document.onmousemove = null;
         }
     }
+
     componentDidMount() {
         this.dragElement(document.getElementById("patternOverlay"));
         this.dragElement(document.getElementById("logoOverlay"));
@@ -54,9 +55,10 @@ export default class Brand extends Component {
         return (
             <div>
                 <div id="brand">
-                    <img className="brand template" src="images/brand/template/LipstickStock.png" />
-                    <img id="patternOverlay" className="brand overlay" />
-                    <img id="logoOverlay" className="brand overlay" />
+                    <img id="brandTemplate" className="template" src="images/brand/template/LipstickStock.png" />
+                    <img id="patternOverlay" className="overlay" />
+                    <img id="logoOverlay" className="overlay" />
+                    <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
                 </div>
                 <FileStack
                     apiKeyMethod={'getFileStackAPIKey'}
