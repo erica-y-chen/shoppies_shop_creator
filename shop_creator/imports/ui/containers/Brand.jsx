@@ -46,9 +46,18 @@ export default class Brand extends Component {
         }
     }
 
+    propagateText = (source, destination) => {
+        var dest = destination;
+        source.onkeyup = () => {
+            dest.innerHTML = source.value;
+        }
+    }
+
     componentDidMount() {
         this.dragElement(document.getElementById("patternOverlay"));
         this.dragElement(document.getElementById("logoOverlay"));
+        this.dragElement(document.getElementById("brandNameOverlay"));
+        this.propagateText(document.getElementById("brandName"), document.getElementById("brandNameOverlay"));
     }
 
     render() {
@@ -59,6 +68,7 @@ export default class Brand extends Component {
                     <img id="patternOverlay" className="overlay" />
                     <img id="logoOverlay" className="overlay" />
                     <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
+                    <div id="brandNameOverlay">SAYBLE</div>
                 </div>
                 <FileStack
                     apiKeyMethod={'getFileStackAPIKey'}
@@ -86,6 +96,12 @@ export default class Brand extends Component {
                       document.getElementById('logoOverlay').src = res.filesUploaded[0].url;
                     }}
                 />
+                <div className="field">
+                    <label>Brand</label>
+                    <div className="ui form input">
+                        <input id="brandName" />
+                    </div>
+                </div>
             </div>
         );
     }
