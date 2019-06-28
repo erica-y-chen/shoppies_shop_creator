@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FileStack from '/imports/ui/components/FileStack.jsx'
 
 /* <img className="brand template" src="images/brand/template/PrimerTube.png" /> */
 export default class Brand extends Component {
@@ -45,14 +46,44 @@ export default class Brand extends Component {
         }
     }
     componentDidMount() {
-        this.dragElement(document.getElementById("overlay"));
+        this.dragElement(document.getElementById("patternOverlay"));
+        this.dragElement(document.getElementById("logoOverlay"));
     }
 
     render() {
         return (
-            <div id="brand">
-                <img className="brand template" src="images/brand/template/LipstickStock.png" />
-                <img id="overlay" className="brand overlay" src="https://cdn.filestackcontent.com/gCM3wBiBSza7l1Bak2kR" />
+            <div>
+                <div id="brand">
+                    <img className="brand template" src="images/brand/template/LipstickStock.png" />
+                    <img id="patternOverlay" className="brand overlay" />
+                    <img id="logoOverlay" className="brand overlay" />
+                </div>
+                <FileStack
+                    apiKeyMethod={'getFileStackAPIKey'}
+                    fieldName={'productPattern'}
+                    componentDisplayMode={{
+                        type: 'button',
+                            customText: 'Upload Pattern',
+                            customClass: 'ui button'
+                    }}
+                    onSuccess={(res, fieldName) => {
+                      document.getElementById(fieldName + 'Thumbnail').src = res.filesUploaded[0].url;
+                      document.getElementById('patternOverlay').src = res.filesUploaded[0].url;
+                    }}
+                />
+                <FileStack
+                    apiKeyMethod={'getFileStackAPIKey'}
+                    fieldName={'productLogo'}
+                    componentDisplayMode={{
+                        type: 'button',
+                            customText: 'Upload Logo',
+                            customClass: 'ui button'
+                    }}
+                    onSuccess={(res, fieldName) => {
+                      document.getElementById(fieldName + 'Thumbnail').src = res.filesUploaded[0].url;
+                      document.getElementById('logoOverlay').src = res.filesUploaded[0].url;
+                    }}
+                />
             </div>
         );
     }

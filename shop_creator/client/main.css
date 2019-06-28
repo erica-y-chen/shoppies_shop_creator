@@ -38,10 +38,18 @@
   text-align: center;
 }
 
-#overlay {
+#patternOverlay {
   position: absolute;
   z-index: 10;
   text-align: center;
+  opacity: 0.8;
+}
+
+#logoOverlay {
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+  opacity: 1.0;
 }
 
 .brand.template {
@@ -52,6 +60,7 @@
 }
 
 .brand.overlay {
+  border: none;
   width: 36px;
   height: 158px;
   top: 203px;
