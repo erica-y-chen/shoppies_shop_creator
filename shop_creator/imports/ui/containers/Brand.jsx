@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import FileStack from '/imports/ui/components/FileStack.jsx'
+import { SketchPicker } from 'react-color';
 
 /* <img className="brand template" src="images/brand/template/PrimerTube.png" /> */
 export default class Brand extends Component {
+    // Brand Name Color Picker
+    state = {
+        brandNameColor: "#d500f9",
+    };
+
+    handleChangeComplete = (color) => {
+        this.setState({ brandNameColor: color.hex });
+    };
+
     // Make the DIV element draggable:
 
     dragElement = (elmnt) => {
@@ -68,7 +78,7 @@ export default class Brand extends Component {
                     <img id="patternOverlay" className="overlay" />
                     <img id="logoOverlay" className="overlay" />
                     <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
-                    <div id="brandNameOverlay">SAYBLE</div>
+                    <div id="brandNameOverlay" style={{color: this.state.brandNameColor}}>SAYBLE</div>
                 </div>
                 <FileStack
                     apiKeyMethod={'getFileStackAPIKey'}
@@ -97,7 +107,8 @@ export default class Brand extends Component {
                     }}
                 />
                 <div className="field">
-                    <label>Brand</label>
+                    <SketchPicker color={ this.state.brandNameColor }
+                                    onChange={ this.handleChangeComplete } />
                     <div className="ui form input">
                         <input id="brandName" />
                     </div>
