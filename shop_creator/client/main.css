@@ -86,6 +86,16 @@
   transform: rotate(90deg); /* Standard syntax */
 }
 
+#brandNameColorSwatch {
+   width: 36px;
+}
+
+#brandNameColorPicker {
+  margin-left: 40px;
+  margin-top: -20px;
+  width: 200px;
+}
+
 #brandMask {
   pointer-events: none;
   position: absolute;

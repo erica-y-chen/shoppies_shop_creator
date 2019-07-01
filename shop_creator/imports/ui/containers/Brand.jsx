@@ -7,11 +7,34 @@ export default class Brand extends Component {
     // Brand Name Color Picker
     state = {
         brandNameColor: "#d500f9",
+        brandNameColorPicker: {
+            toggleState: false,
+            display: 'none'
+        }
     };
 
     handleChangeComplete = (color) => {
         this.setState({ brandNameColor: color.hex });
     };
+
+    toggleColorPickerDisplay = () => {
+        if (!this.state.brandNameColorPicker.toggleState) {
+            this.setState({
+                brandNameColorPicker: {
+                    toggleState: true,
+                    display: 'block'
+                }
+            })
+        }
+        else {
+            this.setState({
+                brandNameColorPicker: {
+                    toggleState: false,
+                    display: 'none'
+                }
+            })
+        }
+    }
 
     // Make the DIV element draggable:
 
@@ -107,10 +130,12 @@ export default class Brand extends Component {
                     }}
                 />
                 <div className="field">
-                    <SketchPicker color={ this.state.brandNameColor }
-                                    onChange={ this.handleChangeComplete } />
                     <div className="ui form input">
-                        <input id="brandName" />
+                        <input type="button" id="brandNameColorSwatch" onClick={ this.toggleColorPickerDisplay } style={{backgroundColor: this.state.brandNameColor}} />
+                        <input id="brandName" placeholder="My Brand"/>
+                    </div>
+                    <div id="brandNameColorPicker" style={{display: this.state.brandNameColorPicker.display}}>
+                        <SketchPicker color={ this.state.brandNameColor } onChange={ this.handleChangeComplete } />
                     </div>
                 </div>
             </div>
