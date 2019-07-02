@@ -78,6 +78,26 @@ class FileStack extends Component {
         // console.log("FileStack component mounted.");
     }
 
+    componentDidUpdate () {
+        const {
+            apiKeyMethod,
+            clientOptions,
+            actionOptions,
+            action
+            } = this.props;
+        const fileStackObj = this
+        Meteor.call(apiKeyMethod, (err, apiKey) => {
+            const client = filestack.init(apiKey, clientOptions);
+            fileStackObj.state = {
+                client,
+                picker: action === 'pick' ? client.picker({ ...actionOptions, onUploadDone: fileStackObj.onFinished }) : null,
+            };
+
+            fileStackObj.onFinished = fileStackObj.onFinished.bind(fileStackObj);
+            fileStackObj.onFail = fileStackObj.onFail.bind(fileStackObj);
+        });
+    }
+
     componentWillUnmount() {
         const {
             action,
