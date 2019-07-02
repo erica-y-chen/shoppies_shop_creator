@@ -11,6 +11,7 @@
     "@babel/runtime": "^7.3.4",
     "bcrypt": "^3.0.6",
     "filestack-js": "^3.3.3",
+    "font-picker-react": "^3.2.0",
     "history": "^4.9.0",
     "meteor-node-stubs": "^0.4.1",
     "react": "^16.8.6",
