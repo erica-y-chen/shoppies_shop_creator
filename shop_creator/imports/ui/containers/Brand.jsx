@@ -8,7 +8,7 @@ export default class Brand extends Component {
     // Brand Name Color Picker
     state = {
         activeFontFamily: "Open Sans",
-        brandNameColor: "#d500f9",
+        brandNameColor: "#ffa545",
         brandNameColorPicker: {
             toggleState: false,
             display: 'none'
