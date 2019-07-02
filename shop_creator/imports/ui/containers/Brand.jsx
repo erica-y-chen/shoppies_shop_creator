@@ -1,17 +1,34 @@
 import React, { Component } from 'react';
 import FileStack from '/imports/ui/components/FileStack.jsx'
 import { SketchPicker } from 'react-color';
+import FontPicker from "font-picker-react";
 
 /* <img className="brand template" src="images/brand/template/PrimerTube.png" /> */
 export default class Brand extends Component {
     // Brand Name Color Picker
     state = {
+        activeFontFamily: "Open Sans",
         brandNameColor: "#d500f9",
         brandNameColorPicker: {
             toggleState: false,
             display: 'none'
+        },
+        brandNameFontPicker: {
+            apiKey: Meteor.settings.public.googleWebFontsAPIKey
         }
     };
+
+    constructor(props) {
+        super(props);
+        const brandObj = this
+        Meteor.call('getGoogleWebFontsAPIKey', (err, apiKey) => {
+            brandObj.setState({
+                brandNameFontPicker: {
+                    apiKey: apiKey
+                }
+            })
+        });
+    }
 
     handleChangeComplete = (color) => {
         this.setState({ brandNameColor: color.hex });
@@ -101,7 +118,7 @@ export default class Brand extends Component {
                     <img id="patternOverlay" className="overlay" />
                     <img id="logoOverlay" className="overlay" />
                     <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
-                    <div id="brandNameOverlay" style={{color: this.state.brandNameColor}}>SAYBLE</div>
+                    <div id="brandNameOverlay" className="apply-font" style={{color: this.state.brandNameColor}}>SAYBLE</div>
                 </div>
                 <FileStack
                     apiKeyMethod={'getFileStackAPIKey'}
@@ -131,6 +148,20 @@ export default class Brand extends Component {
                 />
                 <div className="field">
                     <div className="ui form input">
+                        <div id="fontPickerWrapper">
+                            <FontPicker
+                                apiKey={this.state.brandNameFontPicker.apiKey}
+                                variants={['regular', 'italic', '700', '700italic']}
+                                sort="popularity"
+                                limit={100}
+                                activeFontFamily={this.state.activeFontFamily}
+                                onChange={nextFont =>
+                                    this.setState({
+                                        activeFontFamily: nextFont.family,
+                                    })
+                                }
+                            />
+                        </div>
                         <input type="button" id="brandNameColorSwatch" onClick={ this.toggleColorPickerDisplay } style={{backgroundColor: this.state.brandNameColor}} />
                         <input id="brandName" placeholder="My Brand"/>
                     </div>

@@ -106,6 +106,10 @@
   left: 0;
 }
 
+#fontPickerWrapper, button.dropdown-button, ul, li, button {
+  color: rgba(0, 0, 0, 0.6);
+}
+
 /* CSS declarations go here */
 body {
   font-family: sans-serif;
