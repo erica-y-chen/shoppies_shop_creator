@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FileStack from '/imports/ui/components/FileStack.jsx'
 import { SketchPicker } from 'react-color';
 import FontPicker from "font-picker-react";
+import interact from 'interactjs/dist/interact.min.js'
 
 /* <img className="brand template" src="images/brand/template/PrimerTube.png" /> */
 export default class Brand extends Component {
@@ -56,6 +57,15 @@ export default class Brand extends Component {
     // Make the DIV element draggable:
 
     dragElement = (elmnt) => {
+        interact(elmnt).draggable({
+            onmove(event) {
+                console.log(event.pageX,
+                    event.pageY)
+            }
+        })
+    }
+
+    oldDragElement = (elmnt) => {
         var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
         if (document.getElementById(elmnt.id + "header")) {
             // if present, the header is where you move the DIV from:
