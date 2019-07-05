@@ -2,7 +2,25 @@ import React, { Component } from 'react';
 import FileStack from '/imports/ui/components/FileStack.jsx'
 import { SketchPicker } from 'react-color';
 import FontPicker from "font-picker-react";
-import interact from 'interactjs/dist/interact.min.js'
+import Interactable from '/imports/ui/components/ReactInteract.jsx'
+
+const draggableOptions = {
+    onmove: event => {
+        const target = event.target
+        // keep the dragged position in the data-x/data-y attributes
+        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+        // translate the element
+        target.style.webkitTransform =
+            target.style.transform =
+                'translate(' + x + 'px, ' + y + 'px)'
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+    }
+}
 
 /* <img className="brand template" src="images/brand/template/PrimerTube.png" /> */
 export default class Brand extends Component {
@@ -114,9 +132,9 @@ export default class Brand extends Component {
     }
 
     componentDidMount() {
-        this.dragElement(document.getElementById("patternOverlay"));
-        this.dragElement(document.getElementById("logoOverlay"));
-        this.dragElement(document.getElementById("brandNameOverlay"));
+        // this.dragElement(document.getElementById("patternOverlay"));
+        // this.dragElement(document.getElementById("logoOverlay"));
+        // this.dragElement(document.getElementById("brandNameOverlay"));
         this.propagateText(document.getElementById("brandName"), document.getElementById("brandNameOverlay"));
     }
 
@@ -128,7 +146,9 @@ export default class Brand extends Component {
                     <img id="patternOverlay" className="overlay" />
                     <img id="logoOverlay" className="overlay" />
                     <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
-                    <div id="brandNameOverlay" className="apply-font" style={{color: this.state.brandNameColor}}>SAYBLE</div>
+                    <Interactable draggable draggableOptions={draggableOptions}>
+                        <div id="brandNameOverlay" className="apply-font" style={{color: this.state.brandNameColor}}>SAYBLE</div>
+                    </Interactable>
                 </div>
                 <FileStack
                     apiKeyMethod={'getFileStackAPIKey'}
