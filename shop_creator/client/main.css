@@ -71,19 +71,41 @@
   left: 0;
 }
 
-#brandNameOverlay {
+#brandNameRotate {
   position: absolute;
   z-index: 12;
-  text-align: center;
-  opacity: 1.0;
   display: inline-block;
   top: 110px;
   left: 143px;
-  font-size: 32px;
+  padding: 30px;
+  border: 2px dotted red;
+}
+
+.handle {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: block;
+  width: 2px;
+  height: 2px;
+  z-index: 14;
+}
+
+.overlay {
+  touch-action: none;
+}
+
+#brandNameOverlay {
+  position: absolute;
+  top: 98px;
+  left: 119px;
+  transform: rotate(1.573rad);
+  z-index: 13;
+  text-align: center;
+  opacity: 0.8;
+  display: inline-block;
+  font-size: 3.5em;
   font-weight: 100;
-  -ms-transform: rotate(90deg); /* IE 9 */
-  -webkit-transform: rotate(90deg); /* Safari prior 9.0 */
-  transform: rotate(90deg); /* Standard syntax */
 }
 
 #brandNameColorSwatch {
@@ -99,11 +121,33 @@
 #brandMask {
   pointer-events: none;
   position: absolute;
-  z-index: 13;
+  z-index: 14;
   display: inline-block;
   width: 500px;
   top: 0;
   left: 0;
+}
+
+#brandTrackingLayer {
+  pointer-events: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 15;
+  text-align: center;
+  opacity: 1.0;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border: 2px black dotted;
+}
+
+.activeLayer {
+  border: 2px transparent solid;
+}
+
+.activeLayer:hover {
+  border: 2px lightgray dotted;
 }
 
 #fontPickerWrapper, button.dropdown-button, ul, li, button {

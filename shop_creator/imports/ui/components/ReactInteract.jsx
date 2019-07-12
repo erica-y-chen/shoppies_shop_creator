@@ -15,7 +15,6 @@ export default class Interactable extends Component {
     render() {
         return cloneElement(this.props.children, {
             ref: node => this.node = node,
-            draggable: false
         })
     }
 
@@ -23,14 +22,18 @@ export default class Interactable extends Component {
         this.interact = interact(findDOMNode(this.node))
         this.setInteractions()
     }
-
-    componentWillReceiveProps() {
+    /* Causes events to be doubly registered, which is problematic */
+    /* componentWillReceiveProps() {
         this.interact = interact(findDOMNode(this.node))
         this.setInteractions()
-    }
+    }*/
 
+    // I removed the conditional here, so we're assuming all layers
+    // have all three behaviors: drag, rotate, and resize
     setInteractions() {
-        if (this.props.draggable) this.interact.draggable(this.props.draggableOptions)
-        if (this.props.resizable) this.interact.resizable(this.props.resizableOptions)
+        this.interact
+            .draggable(this.props.draggableOptions)
+            .resizable(this.props.resizableOptions)
     }
 }
+// Author Credit: https://github.comc/lukehansell

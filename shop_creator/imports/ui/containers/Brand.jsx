@@ -3,22 +3,193 @@ import FileStack from '/imports/ui/components/FileStack.jsx'
 import { SketchPicker } from 'react-color';
 import FontPicker from "font-picker-react";
 import Interactable from '/imports/ui/components/ReactInteract.jsx'
+import interact from 'interactjs/dist/interact.min.js'
 
-const draggableOptions = {
-    onmove: event => {
-        const target = event.target
+
+function dragMoveListener (event) {
+    console.log('*****************')
+    var element = event.target;
+    // DRAG //
+    if (element.dataset.mode == 'drag') {
+        console.log('EVENT: move/drag')
         // keep the dragged position in the data-x/data-y attributes
-        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+        var x = (parseFloat(element.dataset.x) || 0) + event.dx / 2;
+        var y = (parseFloat(element.dataset.y) || 0) + event.dy / 2;
 
         // translate the element
-        target.style.webkitTransform =
-            target.style.transform =
-                'translate(' + x + 'px, ' + y + 'px)'
+        element.style.webkitTransform =
+            element.style.transform =
+                'translate(' + x + 'px, ' + y + 'px) rotate(' + parseFloat(element.dataset.angle) + 'rad)';
 
-        // update the posiion attributes
-        target.setAttribute('data-x', x);
-        target.setAttribute('data-y', y);
+        // update the position attributes
+        element.dataset.x = x;
+        element.dataset.y = y;
+    }
+    // ROTATE //
+    if (element.dataset.mode == 'rotate') {
+        console.log('EVENT: move/rotate')
+        var center = {
+            x: parseFloat(element.dataset.centerX) || 0,
+            y: parseFloat(element.dataset.centerY) || 0,
+        };
+        var angle = parseFloat(element.dataset.angle) - (parseFloat(element.dataset.startDragAngle) - getDragAngle(event));
+        console.log("ANGLE TRANSFORM: " + angle);
+        // update transform style on dragmove
+        element.style.webkitTransform =
+            element.style.transform =
+                'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + angle + 'rad)';
+    }
+    setTrackingLayer(event);
+}
+
+// this is used later in the resizing and gesture demos
+window.dragMoveListener = dragMoveListener;
+
+
+const draggableOptions = {
+    onstart: function (event) {
+        setCursor(event);
+        console.log('EVENT: start drag')
+        const element = event.target;
+        console.log("IN onstart()...");
+        // default mode is drag
+        if (!element.dataset.mode) {
+            element.dataset.mode = 'drag';
+            console.log("SET DEFAULT MODE: " + element.dataset.mode);
+        }
+        else {
+            console.log("MODE IS: " + element.dataset.mode);
+        }
+        // default angle is zero
+        if (!element.dataset.angle) {
+            element.dataset.angle = 0;
+            console.log("SET DEFAULT ANGLE: " + element.dataset.angle);
+        }
+        else {
+            console.log("ANGLE DATA: " + element.dataset.angle);
+        }
+        const rect = element.getBoundingClientRect();
+
+        // store the center as the element has css `transform-origin: center center`
+        element.dataset.centerX = rect.left + rect.width / 2;
+        element.dataset.centerY = rect.top + rect.height / 2;
+        if (element.dataset.mode === 'rotate') {
+            // get the angle of the element when the drag starts
+            element.dataset.startDragAngle = getDragAngle(event);
+            console.log("START DRAG ANGLE: " + element.dataset.startDragAngle);
+        }
+    },
+    onend: function (event) {
+        console.log('EVENT: end drag')
+        const element = event.target;
+        console.log("IN onend()...");
+        if (element.dataset.mode === 'drag') {
+            console.log('ANGLE on END: ' + element.dataset.angle + ' (unchanged)');
+            // flip drag/rotate toggle
+            element.dataset.mode = 'rotate';
+        }
+        else {
+            // save the angle on end
+            element.dataset.endDragAngle = getDragAngle(event);
+            console.log('END DRAG ANGLE: ' + element.dataset.endDragAngle);
+            var da = (element.dataset.startDragAngle - element.dataset.endDragAngle)
+            console.log('DELTA DRAG ANGLE: ' + da);
+            element.dataset.angle = parseFloat(element.dataset.angle) - da;
+            console.log('ANGLE on END: ' + element.dataset.angle + ' (changed)');
+            // flip drag/rotate toggle
+            element.dataset.mode = 'drag';
+        }
+        console.log('MODE on END: ' + element.dataset.mode);
+    },
+    onmove: window.dragMoveListener,
+    inertia: false
+}
+
+function getDragAngle(event) {
+    var element = event.target;
+    var startAngle = parseFloat(element.dataset.angle) || 0;
+    var center = {
+        x: parseFloat(element.dataset.centerX) || 0,
+        y: parseFloat(element.dataset.centerY) || 0,
+    };
+    var angle = Math.atan2(center.y - event.clientY,
+        center.x - event.clientX);
+
+    return angle - startAngle;
+}
+
+// Currently unused...because it doesn't work
+function setCursor(event) {
+    const element = event.target;
+    if (element.dataset.mode === 'drag') {
+        element.style.cursor = 'move';
+    }
+    else {
+        element.style.cursor = 'alias';
+    }
+    console.log("CURSOR STYLE: " + element.style.cursor)
+}
+
+function setTrackingLayer(event) {
+    const element = event.target;
+    var trackingLayer = document.getElementById('brandTrackingLayer')
+    trackingLayer.style.cssText = document.defaultView.getComputedStyle(element, "").cssText;
+    trackingLayer.style.zIndex = 16;
+    trackingLayer.style.border = '2px dotted black';
+    trackingLayer.style.pointerEvents = 'none';
+}
+
+const resizableOptions = {
+    // resize from all edges and corners
+    edges: { left: true, right: true, bottom: true, top: true },
+    inertia: false,
+    margin: 5,
+    onstart: function (event) {
+        console.log('EVENT: start resize')
+        console.log(event.rect)
+        console.log(event.target);
+        var element = event.target;
+        element.style.webkitTransform =
+            element.style.transform =
+                'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + element.dataset.angle + 'rad)';
+        console.log('ELEMENT STYLE WIDTH: ' + element.style.width)
+        console.log('EVENT RECT WIDTH: ' + event.rect.width)
+        console.log('TRANSFORM: ' + element.style.transform)
+    },
+    onmove: function (event) {
+        console.log('*****************')
+        console.log('EVENT: resizemove')
+        function cos(a) {
+            return Math.cos(a);
+        }
+        function sin(a) {
+            return Math.sin(a);
+        }
+        var element = event.target,
+            x = (parseFloat(element.dataset.x) || 0),
+            y = (parseFloat(element.dataset.y) || 0),
+            bx = event.rect.width,
+            by = event.rect.height,
+            angle = (parseFloat(element.dataset.angle) || 0),
+            t = Math.abs(angle);
+        // consider switching bx and by based on what quadrant we're in
+        // update the element's style
+        element.style.width = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (bx * cos(t) - by * sin(t)) + 'px'
+        element.style.height = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (by * cos(t) - bx * sin(t)) + 'px'
+
+        // translate when resizing from top or left edges
+        x += event.deltaRect.left;
+        y += event.deltaRect.top;
+        element.style.fontSize = (parseFloat(element.style.width) / 4) + 'px';
+        console.log('ELEMENT STYLE WIDTH: ' + element.style.width)
+        console.log('EVENT RECT WIDTH: ' + event.rect.width)
+        console.log('TRANSFORM: ' + element.style.transform)
+        element.dataset.x = x;
+        element.dataset.y = y;
+        element.style.webkitTransform =
+            element.style.transform =
+                'translate(' + x + 'px, ' + y + 'px) rotate(' + angle + 'rad)';
+        setTrackingLayer(event);
     }
 }
 
@@ -51,6 +222,7 @@ export default class Brand extends Component {
 
     handleChangeComplete = (color) => {
         this.setState({ brandNameColor: color.hex });
+        console.log(this);
     };
 
     toggleColorPickerDisplay = () => {
@@ -72,58 +244,6 @@ export default class Brand extends Component {
         }
     }
 
-    // Make the DIV element draggable:
-
-    dragElement = (elmnt) => {
-        interact(elmnt).draggable({
-            onmove(event) {
-                console.log(event.pageX,
-                    event.pageY)
-            }
-        })
-    }
-
-    oldDragElement = (elmnt) => {
-        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-        if (document.getElementById(elmnt.id + "header")) {
-            // if present, the header is where you move the DIV from:
-            document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-        } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
-            elmnt.onmousedown = dragMouseDown;
-        }
-
-        function dragMouseDown(e) {
-            e = e || window.event;
-            e.preventDefault();
-            // get the mouse cursor position at startup:
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            document.onmouseup = closeDragElement;
-            // call a function whenever the cursor moves:
-            document.onmousemove = elementDrag;
-        }
-
-        function elementDrag(e) {
-            e = e || window.event;
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // set the element's new position:
-            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-        }
-
-        function closeDragElement() {
-            // stop moving when mouse button is released:
-            document.onmouseup = null;
-            document.onmousemove = null;
-        }
-    }
-
     propagateText = (source, destination) => {
         var dest = destination;
         source.onkeyup = () => {
@@ -132,23 +252,36 @@ export default class Brand extends Component {
     }
 
     componentDidMount() {
-        // this.dragElement(document.getElementById("patternOverlay"));
-        // this.dragElement(document.getElementById("logoOverlay"));
-        // this.dragElement(document.getElementById("brandNameOverlay"));
         this.propagateText(document.getElementById("brandName"), document.getElementById("brandNameOverlay"));
     }
-
     render() {
         return (
             <div>
                 <div id="brand">
                     <img id="brandTemplate" className="template" src="images/brand/template/LipstickStock.png" />
-                    <img id="patternOverlay" className="overlay" />
-                    <img id="logoOverlay" className="overlay" />
-                    <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
-                    <Interactable draggable draggableOptions={draggableOptions}>
-                        <div id="brandNameOverlay" className="apply-font" style={{color: this.state.brandNameColor}}>SAYBLE</div>
+                    <Interactable
+                        draggable draggableOptions={draggableOptions}
+                        resizable resizableOptions={resizableOptions}>
+                        <img id="patternOverlay" className="overlay activeLayer" onMouseOver={setTrackingLayer}/>
                     </Interactable>
+                    <Interactable
+                        draggable draggableOptions={draggableOptions}
+                        resizable resizableOptions={resizableOptions}>
+                        <img id="logoOverlay" className="overlay activeLayer" onMouseOver={setTrackingLayer}/>
+                    </Interactable>
+                    <Interactable
+                        draggable draggableOptions={draggableOptions}
+                        resizable resizableOptions={resizableOptions}>
+                        <div id="brandNameOverlay" className="apply-font activeLayer"
+                             data-angle="1.573"
+                             onMouseOver={setTrackingLayer}
+                             style={{
+                             color: this.state.brandNameColor,
+                             touchAction: 'none'}}>SAYBLE
+                        </div>
+                    </Interactable>
+                    <div id="brandTrackingLayer" className="overlay"></div>
+                    <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
                 </div>
                 <FileStack
                     apiKeyMethod={'getFileStackAPIKey'}
