@@ -71,26 +71,6 @@
   left: 0;
 }
 
-#brandNameRotate {
-  position: absolute;
-  z-index: 12;
-  display: inline-block;
-  top: 110px;
-  left: 143px;
-  padding: 30px;
-  border: 2px dotted red;
-}
-
-.handle {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  display: block;
-  width: 2px;
-  height: 2px;
-  z-index: 14;
-}
-
 .overlay {
   touch-action: none;
 }
