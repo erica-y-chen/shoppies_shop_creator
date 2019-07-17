@@ -4,7 +4,7 @@ allow-deny@1.1.0
 autoupdate@1.6.0
 babel-compiler@7.3.4
 babel-runtime@1.3.0
-base64@1.0.11
+base64@1.0.12
 binary-heap@1.0.11
 blaze-tools@1.0.10
 boilerplate-generator@1.6.0
@@ -12,7 +12,7 @@ caching-compiler@1.2.1
 caching-html-compiler@1.1.3
 callback-hook@1.1.0
 check@1.3.1
-day:accounts-react@1.3.0
+day:accounts-react@1.4.6
 day:accounts-react-semantic-ui@1.0.2
 ddp@1.4.0
 ddp-client@2.3.3
@@ -52,7 +52,7 @@ mobile-status-bar@1.0.14
 modern-browsers@0.1.4
 modules@0.13.0
 modules-runtime@0.10.3
-mongo@1.6.2
+mongo@1.6.3
 mongo-decimal@0.1.1
 mongo-dev-server@1.1.0
 mongo-id@1.0.7
