@@ -176,6 +176,14 @@ div#font-picker .dropdown-button {
   user-select: none;
 }
 
+div#font-picker > ul > li button {
+  color: rgba(0, 0, 0, 0.6);
+  background: #ffffff linear-gradient(transparent, rgba(0, 0, 0, 0.02));
+  cursor: pointer;
+  border-radius: 0.21428571em;
+
+}
+
 div#font-picker .dropdown-icon {
   float: right;
   position: relative;
