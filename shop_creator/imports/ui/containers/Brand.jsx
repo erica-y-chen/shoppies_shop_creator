@@ -132,11 +132,51 @@ function setCursor(event) {
 
 function setTrackingLayer(event) {
     const element = event.target;
+    setTrackingLayerFor(element)
+}
+
+function setTrackingLayerFor(element) {
     var trackingLayer = document.getElementById('brandTrackingLayer')
     trackingLayer.style.cssText = document.defaultView.getComputedStyle(element, "").cssText;
     trackingLayer.style.zIndex = 16;
     trackingLayer.style.border = '2px dotted black';
     trackingLayer.style.pointerEvents = 'none';
+}
+
+function deactivateSelector(id) {
+    removeClass(id,'overlaySelected');
+    addClass(id + 'Icon','outline');
+}
+
+function setActiveLayer(id) {
+    var activeLayer = document.getElementById(id);
+    // Make all the other layers *not* respond
+    // * I need a list of the other layers
+    // * For now I can do it manually
+    var layers = ["brandNameOverlay", "patternOverlay", "logoOverlay"]
+    for (let layerId of layers) {
+        document.getElementById(layerId).style.pointerEvents = 'none';
+        removeClass(layerId + 'Selector','overlaySelected');
+        addClass(layerId + 'SelectorIcon','outline');
+        // document.getElementById(layerId).addEventListener('mouseout', deactivateSelector(layerId + 'Selector'), false)
+    }
+    // Make the selected layer respond to pointer events
+    activeLayer.style.pointerEvents = 'all';
+    // Show visual cues for the selector
+    addClass(id + 'Selector','overlaySelected');
+    removeClass(id + 'SelectorIcon','outline');
+    setTrackingLayerFor(activeLayer);
+    Meteor.settings.public.brand.state.activeLayer = activeLayer;
+    // activeLayer.removeEventListener('mouseout', deactivateSelector(id + 'Selector'), false)
+    console.log("ACTIVE LAYER: " + id)
+}
+
+function removeClass(id, cssClass) {
+    document.getElementById(id).classList.remove(cssClass);
+}
+
+function addClass(id, cssClass) {
+    document.getElementById(id).classList.add(cssClass);
 }
 
 const resizableOptions = {
@@ -197,7 +237,10 @@ const resizableOptions = {
 export default class Brand extends Component {
     // Brand Name Color Picker
     state = {
-        activeFontFamily: "Open Sans",
+        activeLayer: {
+            id: ''
+        },
+        activeFontFamily: "Roboto",
         brandNameColor: "#ffa545",
         brandNameColorPicker: {
             toggleState: false,
@@ -245,92 +288,147 @@ export default class Brand extends Component {
     }
 
     propagateText = (source, destination) => {
-        var dest = destination;
         source.onkeyup = () => {
-            dest.innerHTML = source.value;
+            for (let d of destination) {
+                document.getElementById(d).innerHTML = source.value;
+            }
         }
     }
 
     componentDidMount() {
-        this.propagateText(document.getElementById("brandName"), document.getElementById("brandNameOverlay"));
+        Meteor.settings.public.brand = this;
+        this.propagateText(document.getElementById("brandName"), ["brandNameOverlay"]);
+        document.getElementById('brandNameOverlaySelector').onclick = () => {
+            setActiveLayer('brandNameOverlay');
+        }
+        document.getElementById('brandNameOverlaySelector').onmouseover = () => {
+            addClass('brandNameOverlaySelector','overlaySelected');
+            removeClass('brandNameOverlaySelectorIcon','outline');
+        }
+        document.getElementById('brandNameOverlaySelector').onmouseout = () => {
+            if (!(Meteor.settings.public.brand.state.activeLayer.id === 'brandNameOverlay')) {
+                removeClass('brandNameOverlaySelector', 'overlaySelected');
+                addClass('brandNameOverlaySelectorIcon', 'outline');
+            }
+        }
+        document.getElementById('patternOverlaySelector').onclick = () => {
+            setActiveLayer('patternOverlay');
+        }
+        document.getElementById('patternOverlaySelector').onmouseover = () => {
+            addClass('patternOverlaySelector','overlaySelected');
+            removeClass('patternOverlaySelectorIcon','outline');
+        }
+        document.getElementById('patternOverlaySelector').onmouseout = () => {
+            if (!(Meteor.settings.public.brand.state.activeLayer.id === 'patternOverlay')) {
+                removeClass('patternOverlaySelector', 'overlaySelected');
+                addClass('patternOverlaySelectorIcon', 'outline');
+            }
+        }
+        document.getElementById('logoOverlaySelector').onclick = () => {
+            setActiveLayer('logoOverlay');
+        }
+        document.getElementById('logoOverlaySelector').onmouseover = () => {
+            addClass('logoOverlaySelector','overlaySelected');
+            removeClass('logoOverlaySelectorIcon','outline');
+        }
+        document.getElementById('logoOverlaySelector').onmouseout = () => {
+            if (!(Meteor.settings.public.brand.state.activeLayer.id === 'logoOverlay')) {
+                removeClass('logoOverlaySelector', 'overlaySelected');
+                addClass('logoOverlaySelectorIcon', 'outline');
+            }
+        }
     }
     render() {
         return (
             <div>
-                <div id="brand">
-                    <img id="brandTemplate" className="template" src="images/brand/template/LipstickStock.png" />
-                    <Interactable
-                        draggable draggableOptions={draggableOptions}
-                        resizable resizableOptions={resizableOptions}>
-                        <img id="patternOverlay" className="overlay activeLayer" onMouseOver={setTrackingLayer}/>
-                    </Interactable>
-                    <Interactable
-                        draggable draggableOptions={draggableOptions}
-                        resizable resizableOptions={resizableOptions}>
-                        <img id="logoOverlay" className="overlay activeLayer" onMouseOver={setTrackingLayer}/>
-                    </Interactable>
-                    <Interactable
-                        draggable draggableOptions={draggableOptions}
-                        resizable resizableOptions={resizableOptions}>
-                        <div id="brandNameOverlay" className="apply-font activeLayer"
-                             data-angle="1.573"
-                             onMouseOver={setTrackingLayer}
-                             style={{
-                             color: this.state.brandNameColor,
-                             touchAction: 'none'}}>SAYBLE
-                        </div>
-                    </Interactable>
-                    <div id="brandTrackingLayer" className="overlay"></div>
-                    <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
-                </div>
-                <FileStack
-                    apiKeyMethod={'getFileStackAPIKey'}
-                    fieldName={'productPattern'}
-                    componentDisplayMode={{
-                        type: 'button',
-                            customText: 'Upload Pattern',
-                            customClass: 'ui button'
-                    }}
-                    onSuccess={(res, fieldName) => {
-                      document.getElementById(fieldName + 'Thumbnail').src = res.filesUploaded[0].url;
-                      document.getElementById('patternOverlay').src = res.filesUploaded[0].url;
-                    }}
-                />
-                <FileStack
-                    apiKeyMethod={'getFileStackAPIKey'}
-                    fieldName={'productLogo'}
-                    componentDisplayMode={{
-                        type: 'button',
-                            customText: 'Upload Logo',
-                            customClass: 'ui button'
-                    }}
-                    onSuccess={(res, fieldName) => {
-                      document.getElementById(fieldName + 'Thumbnail').src = res.filesUploaded[0].url;
-                      document.getElementById('logoOverlay').src = res.filesUploaded[0].url;
-                    }}
-                />
-                <div className="field">
-                    <div className="ui form input">
-                        <div id="fontPickerWrapper">
-                            <FontPicker
-                                apiKey={this.state.brandNameFontPicker.apiKey}
-                                variants={['regular', 'italic', '700', '700italic']}
-                                sort="popularity"
-                                limit={100}
-                                activeFontFamily={this.state.activeFontFamily}
-                                onChange={nextFont =>
-                                    this.setState({
-                                        activeFontFamily: nextFont.family,
-                                    })
-                                }
+                <div id="layers">
+                    <ul>
+                        <li id="editor">
+                            <div id="brand">
+                                <img id="brandTemplate" className="template" src="images/brand/template/LipstickStock.png" />
+                                <Interactable
+                                    draggable draggableOptions={draggableOptions}
+                                    resizable resizableOptions={resizableOptions}>
+                                    <img id="patternOverlay" className="overlay" onMouseOver={setTrackingLayer}/>
+                                </Interactable>
+                                <Interactable
+                                    draggable draggableOptions={draggableOptions}
+                                    resizable resizableOptions={resizableOptions}>
+                                    <img id="logoOverlay" className="overlay" onMouseOver={setTrackingLayer}/>
+                                </Interactable>
+                                <Interactable
+                                    draggable draggableOptions={draggableOptions}
+                                    resizable resizableOptions={resizableOptions}>
+                                    <div id="brandNameOverlay" className="overlay apply-font"
+                                         data-angle="1.573"
+                                         onMouseOver={setTrackingLayer}
+                                         style={{color: this.state.brandNameColor}}>SAYBLE
+                                    </div>
+                                </Interactable>
+                                <div id="brandTrackingLayer" className="overlay"></div>
+                                <img id="brandMask" className="mask" src="images/brand/mask/LipstickMask.png" />
+                            </div>
+                        </li>
+                        <li id="brandNameOverlaySelector">
+                            <i id="brandNameOverlaySelectorIcon" aria-hidden="true" className="edit outline icon"></i>
+                            <div className="field">
+                                <div className="ui form input">
+                                    <div id="fontPickerWrapper">
+                                        <FontPicker
+                                            apiKey={this.state.brandNameFontPicker.apiKey}
+                                            variants={['regular', 'italic', '700', '700italic']}
+                                            sort="popularity"
+                                            limit={100}
+                                            activeFontFamily={this.state.activeFontFamily}
+                                            onChange={
+                                                nextFont =>
+                                                    this.setState({
+                                                        activeFontFamily: nextFont.family,
+                                                    })
+                                                }
+                                        />
+                                    </div>
+                                    <input type="button" id="brandNameColorSwatch" onClick={ this.toggleColorPickerDisplay } style={{backgroundColor: this.state.brandNameColor}} />
+                                    <input id="brandName" placeholder="My Brand"/>
+                                </div>
+                                <div id="brandNameColorPicker" style={{display: this.state.brandNameColorPicker.display}}>
+                                    <SketchPicker color={ this.state.brandNameColor } onChange={ this.handleChangeComplete } />
+                                </div>
+                            </div>
+                        </li>
+                        <li id="patternOverlaySelector">
+                            <i id="patternOverlaySelectorIcon" aria-hidden="true" className="edit outline icon"></i>
+                            <FileStack
+                                apiKeyMethod={'getFileStackAPIKey'}
+                                fieldName={'productPattern'}
+                                componentDisplayMode={{
+                                    type: 'button',
+                                        customText: 'Upload Pattern',
+                                        customClass: 'ui button'
+                                }}
+                                onSuccess={(res, fieldName) => {
+                                    document.getElementById(fieldName + 'Thumbnail').src = res.filesUploaded[0].url;
+                                    document.getElementById('patternOverlay').src = res.filesUploaded[0].url;
+                                }}
                             />
-                        </div>
-                        <input type="button" id="brandNameColorSwatch" onClick={ this.toggleColorPickerDisplay } style={{backgroundColor: this.state.brandNameColor}} />
-                        <input id="brandName" placeholder="My Brand"/>
-                    </div>
-                    <div id="brandNameColorPicker" style={{display: this.state.brandNameColorPicker.display}}>
-                        <SketchPicker color={ this.state.brandNameColor } onChange={ this.handleChangeComplete } />
-                    </div>
+                        </li>
+                        <li id="logoOverlaySelector">
+                            <i id="logoOverlaySelectorIcon" aria-hidden="true" className="edit outline icon"></i>
+                            <FileStack
+                                apiKeyMethod={'getFileStackAPIKey'}
+                                fieldName={'productLogo'}
+                                componentDisplayMode={{
+                                    type: 'button',
+                                        customText: 'Upload Logo',
+                                        customClass: 'ui button'
+                                }}
+                                onSuccess={(res, fieldName) => {
+                                    document.getElementById(fieldName + 'Thumbnail').src = res.filesUploaded[0].url;
+                                    document.getElementById('logoOverlay').src = res.filesUploaded[0].url;
+                                }}
+                            />
+                        </li>
+                    </ul>
                 </div>
             </div>
         );
