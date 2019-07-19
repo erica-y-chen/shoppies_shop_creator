@@ -5,47 +5,6 @@ import FontPicker from "font-picker-react";
 import Interactable from '/imports/ui/components/ReactInteract.jsx'
 import interact from 'interactjs/dist/interact.min.js'
 
-
-function dragMoveListener (event) {
-    console.log('*****************')
-    var element = event.target;
-    // DRAG //
-    if (element.dataset.mode == 'drag') {
-        console.log('EVENT: move/drag')
-        // keep the dragged position in the data-x/data-y attributes
-        var x = (parseFloat(element.dataset.x) || 0) + event.dx / 2;
-        var y = (parseFloat(element.dataset.y) || 0) + event.dy / 2;
-
-        // translate the element
-        element.style.webkitTransform =
-            element.style.transform =
-                'translate(' + x + 'px, ' + y + 'px) rotate(' + parseFloat(element.dataset.angle) + 'rad)';
-
-        // update the position attributes
-        element.dataset.x = x;
-        element.dataset.y = y;
-    }
-    // ROTATE //
-    if (element.dataset.mode == 'rotate') {
-        console.log('EVENT: move/rotate')
-        var center = {
-            x: parseFloat(element.dataset.centerX) || 0,
-            y: parseFloat(element.dataset.centerY) || 0,
-        };
-        var angle = parseFloat(element.dataset.angle) - (parseFloat(element.dataset.startDragAngle) - getDragAngle(event));
-        console.log("ANGLE TRANSFORM: " + angle);
-        // update transform style on dragmove
-        element.style.webkitTransform =
-            element.style.transform =
-                'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + angle + 'rad)';
-    }
-    setTrackingLayer(event);
-}
-
-// this is used later in the resizing and gesture demos
-window.dragMoveListener = dragMoveListener;
-
-
 const draggableOptions = {
     onstart: function (event) {
         setCursor(event);
@@ -101,8 +60,97 @@ const draggableOptions = {
         }
         console.log('MODE on END: ' + element.dataset.mode);
     },
-    onmove: window.dragMoveListener,
+    onmove: function (event) {
+        console.log('*****************')
+        var element = event.target;
+        // DRAG //
+        if (element.dataset.mode == 'drag') {
+            console.log('EVENT: move/drag')
+            // keep the dragged position in the data-x/data-y attributes
+            var x = (parseFloat(element.dataset.x) || 0) + event.dx / 2;
+            var y = (parseFloat(element.dataset.y) || 0) + event.dy / 2;
+
+            // translate the element
+            element.style.webkitTransform =
+                element.style.transform =
+                    'translate(' + x + 'px, ' + y + 'px) rotate(' + parseFloat(element.dataset.angle) + 'rad)';
+
+            // update the position attributes
+            element.dataset.x = x;
+            element.dataset.y = y;
+        }
+        // ROTATE //
+        if (element.dataset.mode == 'rotate') {
+            console.log('EVENT: move/rotate')
+            var center = {
+                x: parseFloat(element.dataset.centerX) || 0,
+                y: parseFloat(element.dataset.centerY) || 0,
+            };
+            var angle = parseFloat(element.dataset.angle) - (parseFloat(element.dataset.startDragAngle) - getDragAngle(event));
+            console.log("ANGLE TRANSFORM: " + angle);
+            // update transform style on dragmove
+            element.style.webkitTransform =
+                element.style.transform =
+                    'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + angle + 'rad)';
+        }
+        setTrackingLayer(event);
+    },
     inertia: false
+}
+
+const resizableOptions = {
+    // resize from all edges and corners
+    edges: { left: true, right: true, bottom: true, top: true },
+    inertia: false,
+    margin: 5,
+    onstart: function (event) {
+        console.log('EVENT: start resize')
+        console.log(event.rect)
+        console.log(event.target);
+        var element = event.target;
+        element.style.webkitTransform =
+            element.style.transform =
+                'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + element.dataset.angle + 'rad)';
+    },
+    onmove: function (event) {
+        console.log('*****************')
+        console.log('EVENT: resizemove')
+        function cos(a) {
+            return Math.cos(a);
+        }
+        function sin(a) {
+            return Math.sin(a);
+        }
+        var element = event.target,
+            x = (parseFloat(element.dataset.x) || 0),
+            y = (parseFloat(element.dataset.y) || 0),
+            rect = event.rect,
+            bx = rect.width,
+            by = rect.height,
+            angle = (parseFloat(element.dataset.angle) || 0),
+            t = Math.abs(angle);
+        // consider switching bx and by based on what quadrant we're in
+        // update the element's style
+        element.style.width = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (bx * cos(t) - by * sin(t)) + 'px'
+        element.style.height = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (by * cos(t) - bx * sin(t)) + 'px'
+
+        // translate when resizing from top or left edges
+        x += event.deltaRect.left;
+        y += event.deltaRect.top;
+        element.style.fontSize = (parseFloat(element.style.width) / 4) + 'px';
+        console.log('ELEMENT STYLE WIDTH/HEIGHT: ' + element.style.width + '/' + element.style.height)
+        console.log('EVENT RECT WIDTH/HEIGHT: ' + event.rect.width + '/' + event.rect.height)
+        // console.log('BOUNDING RECT WIDTH/HEIGHT: ' + rect.width + '/' + rect.height)
+        console.log('DELTA RECT:')
+        console.log(event.deltaRect)
+        console.log('TRANSFORM: ' + element.style.transform)
+        element.dataset.x = x;
+        element.dataset.y = y;
+        element.style.webkitTransform =
+            element.style.transform =
+                'translate(' + x + 'px, ' + y + 'px) rotate(' + angle + 'rad)';
+        setTrackingLayer(event);
+    }
 }
 
 function getDragAngle(event) {
@@ -143,11 +191,6 @@ function setTrackingLayerFor(element) {
     trackingLayer.style.pointerEvents = 'none';
 }
 
-function deactivateSelector(id) {
-    removeClass(id,'overlaySelected');
-    addClass(id + 'Icon','outline');
-}
-
 function setActiveLayer(id) {
     var activeLayer = document.getElementById(id);
     // Make all the other layers *not* respond
@@ -158,7 +201,6 @@ function setActiveLayer(id) {
         document.getElementById(layerId).style.pointerEvents = 'none';
         removeClass(layerId + 'Selector','overlaySelected');
         addClass(layerId + 'SelectorIcon','outline');
-        // document.getElementById(layerId).addEventListener('mouseout', deactivateSelector(layerId + 'Selector'), false)
     }
     // Make the selected layer respond to pointer events
     activeLayer.style.pointerEvents = 'all';
@@ -167,7 +209,6 @@ function setActiveLayer(id) {
     removeClass(id + 'SelectorIcon','outline');
     setTrackingLayerFor(activeLayer);
     Meteor.settings.public.brand.state.activeLayer = activeLayer;
-    // activeLayer.removeEventListener('mouseout', deactivateSelector(id + 'Selector'), false)
     console.log("ACTIVE LAYER: " + id)
 }
 
@@ -177,60 +218,6 @@ function removeClass(id, cssClass) {
 
 function addClass(id, cssClass) {
     document.getElementById(id).classList.add(cssClass);
-}
-
-const resizableOptions = {
-    // resize from all edges and corners
-    edges: { left: true, right: true, bottom: true, top: true },
-    inertia: false,
-    margin: 5,
-    onstart: function (event) {
-        console.log('EVENT: start resize')
-        console.log(event.rect)
-        console.log(event.target);
-        var element = event.target;
-        element.style.webkitTransform =
-            element.style.transform =
-                'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + element.dataset.angle + 'rad)';
-        console.log('ELEMENT STYLE WIDTH: ' + element.style.width)
-        console.log('EVENT RECT WIDTH: ' + event.rect.width)
-        console.log('TRANSFORM: ' + element.style.transform)
-    },
-    onmove: function (event) {
-        console.log('*****************')
-        console.log('EVENT: resizemove')
-        function cos(a) {
-            return Math.cos(a);
-        }
-        function sin(a) {
-            return Math.sin(a);
-        }
-        var element = event.target,
-            x = (parseFloat(element.dataset.x) || 0),
-            y = (parseFloat(element.dataset.y) || 0),
-            bx = event.rect.width,
-            by = event.rect.height,
-            angle = (parseFloat(element.dataset.angle) || 0),
-            t = Math.abs(angle);
-        // consider switching bx and by based on what quadrant we're in
-        // update the element's style
-        element.style.width = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (bx * cos(t) - by * sin(t)) + 'px'
-        element.style.height = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (by * cos(t) - bx * sin(t)) + 'px'
-
-        // translate when resizing from top or left edges
-        x += event.deltaRect.left;
-        y += event.deltaRect.top;
-        element.style.fontSize = (parseFloat(element.style.width) / 4) + 'px';
-        console.log('ELEMENT STYLE WIDTH: ' + element.style.width)
-        console.log('EVENT RECT WIDTH: ' + event.rect.width)
-        console.log('TRANSFORM: ' + element.style.transform)
-        element.dataset.x = x;
-        element.dataset.y = y;
-        element.style.webkitTransform =
-            element.style.transform =
-                'translate(' + x + 'px, ' + y + 'px) rotate(' + angle + 'rad)';
-        setTrackingLayer(event);
-    }
 }
 
 /* <img className="brand template" src="images/brand/template/PrimerTube.png" /> */
@@ -370,7 +357,7 @@ export default class Brand extends Component {
                             </div>
                         </li>
                         <li id="brandNameOverlaySelector">
-                            <i id="brandNameOverlaySelectorIcon" aria-hidden="true" className="edit outline icon"></i>
+                            <i id="brandNameOverlaySelectorIcon" aria-hidden="true" className="edit outline icon" />
                             <div className="field">
                                 <div className="ui form input">
                                     <div id="fontPickerWrapper">
@@ -397,7 +384,7 @@ export default class Brand extends Component {
                             </div>
                         </li>
                         <li id="patternOverlaySelector">
-                            <i id="patternOverlaySelectorIcon" aria-hidden="true" className="edit outline icon"></i>
+                            <i id="patternOverlaySelectorIcon" aria-hidden="true" className="edit outline icon" />
                             <FileStack
                                 apiKeyMethod={'getFileStackAPIKey'}
                                 fieldName={'productPattern'}
@@ -413,7 +400,7 @@ export default class Brand extends Component {
                             />
                         </li>
                         <li id="logoOverlaySelector">
-                            <i id="logoOverlaySelectorIcon" aria-hidden="true" className="edit outline icon"></i>
+                            <i id="logoOverlaySelectorIcon" aria-hidden="true" className="edit outline icon" />
                             <FileStack
                                 apiKeyMethod={'getFileStackAPIKey'}
                                 fieldName={'productLogo'}
