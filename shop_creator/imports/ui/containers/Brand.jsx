@@ -27,11 +27,18 @@ const draggableOptions = {
         else {
             console.log("ANGLE DATA: " + element.dataset.angle);
         }
-        const rect = element.getBoundingClientRect();
-
-        // store the center as the element has css `transform-origin: center center`
-        element.dataset.centerX = rect.left + rect.width / 2;
-        element.dataset.centerY = rect.top + rect.height / 2;
+        // ensure we've stored the center
+        if (!element.dataset.centerX || !element.dataset.centerY) {
+            const rect = element.getBoundingClientRect();
+            element.dataset.centerX = rect.left + rect.width / 2;
+            element.dataset.centerY = rect.top + rect.height / 2;
+            console.log("CENTER was SET");
+        }
+        const center = {
+            x: parseFloat(element.dataset.centerX) || 0,
+            y: parseFloat(element.dataset.centerY) || 0,
+        };
+        console.log(center);
         if (element.dataset.mode === 'rotate') {
             // get the angle of the element when the drag starts
             element.dataset.startDragAngle = getDragAngle(event);
@@ -43,6 +50,17 @@ const draggableOptions = {
         const element = event.target;
         console.log("IN onend()...");
         if (element.dataset.mode === 'drag') {
+            // store the changed center
+            const rect = element.getBoundingClientRect();
+            // store the center as it may have changed
+            element.dataset.centerX = rect.left + rect.width / 2;
+            element.dataset.centerY = rect.top + rect.height / 2;
+            console.log("CENTER was CHANGED");
+            const center = {
+                x: parseFloat(element.dataset.centerX) || 0,
+                y: parseFloat(element.dataset.centerY) || 0,
+            };
+            console.log(element.dataset);
             console.log('ANGLE on END: ' + element.dataset.angle + ' (unchanged)');
             // flip drag/rotate toggle
             element.dataset.mode = 'rotate';
@@ -82,7 +100,7 @@ const draggableOptions = {
         // ROTATE //
         if (element.dataset.mode == 'rotate') {
             console.log('EVENT: move/rotate')
-            var center = {
+            const center = {
                 x: parseFloat(element.dataset.centerX) || 0,
                 y: parseFloat(element.dataset.centerY) || 0,
             };
@@ -104,10 +122,10 @@ const resizableOptions = {
     inertia: false,
     margin: 5,
     onstart: function (event) {
-        console.log('EVENT: start resize')
-        console.log(event.rect)
-        console.log(event.target);
-        var element = event.target;
+        console.log('')
+        console.log('*****************')
+        console.log('EVENT: resize start')
+        const element = event.target;
         // Ensure we have explicit dimensions before resize
         element.style.width = document.defaultView.getComputedStyle(element).getPropertyValue("width");
         element.style.height = document.defaultView.getComputedStyle(element).getPropertyValue("height");
@@ -115,59 +133,76 @@ const resizableOptions = {
         element.dataset.initialWidth = element.style.width;
         element.dataset.initialHeight = element.style.height;
         const rect = element.getBoundingClientRect();
-        element.dataset.initialBoundingRectWidth = rect.width;
-        element.dataset.initialBoundingRectHeight = rect.height;
-        // store the center as the element has css `transform-origin: center center`
-        element.dataset.centerX = rect.left + rect.width / 2;
-        element.dataset.centerY = rect.top + rect.height / 2;
-        // TODO: I'm not sure this is necessary
-        element.style.webkitTransform =
-            element.style.transform =
-                'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + element.dataset.angle + 'rad)';
+        // ensure we've stored the center
+        if (!element.dataset.centerX || !element.dataset.centerY) {
+            element.dataset.centerX = rect.left + rect.width / 2;
+            element.dataset.centerY = rect.top + rect.height / 2;
+            console.log("CENTER was SET");
+        }
+        const center = {
+            x: parseFloat(element.dataset.centerX) || 0,
+            y: parseFloat(element.dataset.centerY) || 0,
+        };
+        console.log('CENTER: ')
+        console.log(center);
+        // store the initial radius for use in the scaling factor
+        element.dataset.initialRadius = Math.sqrt(Math.pow((rect.top + rect.height / 2) - event.clientY,2) +
+            Math.pow((rect.left + rect.width / 2) - event.clientX,2));
+        element.dataset.initialX = element.dataset.x;
+        element.dataset.initialY = element.dataset.y;
     },
     onmove: function (event) {
-        console.log('*****************')
-        console.log('EVENT: resizemove')
-        var element = event.target,
-            x = (parseFloat(element.dataset.x) || 0),
-            y = (parseFloat(element.dataset.y) || 0),
-            angle = (parseFloat(element.dataset.angle) || 0)
-        var initialWidth = parseFloat(element.dataset.initialWidth)
-        var initialHeight = parseFloat(element.dataset.initialHeight)
-        var initialBRWidth = parseFloat(element.dataset.initialBoundingRectWidth)
-        var initialBRHeight = parseFloat(element.dataset.initialBoundingRectHeight)
-        var scaleFactor = 1;
-        var scaleFactorWidth = event.rect.width / initialBRWidth;
-        var scaleFactorHeight = event.rect.height / initialBRHeight;
-        // decide which dimension is changing more
-        if (Math.abs(1 - scaleFactorWidth) > Math.abs(1 - scaleFactorHeight)) {
-            scaleFactor = scaleFactorWidth;
-            console.log("CHANGING WIDTH BY: " + scaleFactorWidth);
+        // console.log('EVENT: resize move')
+        const element = event.target
+        var x = (parseFloat(element.dataset.x) || 0);
+        var y = (parseFloat(element.dataset.y) || 0);
+        const angle = (parseFloat(element.dataset.angle) || 0);
+        const center = {
+            x: parseFloat(element.dataset.centerX) || 0,
+            y: parseFloat(element.dataset.centerY) || 0,
+        };
+        const origin = {
+            x: parseFloat(element.dataset.initialX) || 0,
+            y: parseFloat(element.dataset.initialY) || 0,
         }
-        else {
-            scaleFactor = scaleFactorHeight;
-            console.log("CHANGING HEIGHT BY: " + scaleFactorHeight);
-        }
-        var newWidth = initialWidth * scaleFactor;
-        var newHeight = initialHeight * scaleFactor;
+        const initialRadius = parseFloat(element.dataset.initialRadius)
+        const dragRadius = Math.sqrt(Math.pow(center.y - event.clientY,2) +
+            Math.pow(center.x - event.clientX,2));
+        const initialWidth = parseFloat(element.dataset.initialWidth)
+        const initialHeight = parseFloat(element.dataset.initialHeight)
+        const scaleFactor = dragRadius/initialRadius;
+        // console.log(dragRadius)
+        const newWidth = initialWidth * scaleFactor;
+        const newHeight = initialHeight * scaleFactor;
         // update the element's style - aspect ratio locked
         element.style.width = newWidth + 'px';
         element.style.height = newHeight + 'px';
         // translate to account for scaling
-        x = (initialWidth/2) - (newWidth/2);
-        y = (initialHeight/2) - (newHeight/2);
-        element.style.fontSize = (parseFloat(element.style.width) / 4) + 'px';
-        console.log('ELEMENT WIDTH/HEIGHT: ' + element.style.width + '/' + element.style.height)
-        console.log('EVENT WIDTH/HEIGHT: ' + event.rect.width + '/' + event.rect.height)
-        console.log('EVENT DELTA RECT:')
-        console.log(event.deltaRect)
-        console.log('TRANSFORM: ' + element.style.transform)
+        x = origin.x + (initialWidth/2) - (newWidth/2);
+        y = origin.y + (initialHeight/2) - (newHeight/2);
+        // Consider doing this with a transformed span rather than font-size
+        element.style.fontSize = (parseFloat(element.style.width) / 3.7) + 'px';
         element.dataset.x = x;
         element.dataset.y = y;
         element.style.webkitTransform =
             element.style.transform =
                 'translate(' + x + 'px, ' + y + 'px) rotate(' + angle + 'rad)';
         setTrackingLayer(event);
+    },
+    onend: function (event) {
+        console.log('EVENT: resize end')
+        const element = event.target
+        const rect = element.getBoundingClientRect();
+        // store the center as it may have changed
+        // TODO: Center should *not* change on resize
+        element.dataset.centerX = rect.left + rect.width / 2;
+        element.dataset.centerY = rect.top + rect.height / 2;
+        console.log("CENTER was CHANGED");
+        const center = {
+            x: parseFloat(element.dataset.centerX) || 0,
+            y: parseFloat(element.dataset.centerY) || 0,
+        };
+        console.log(element.dataset);
     }
 }
 
