@@ -108,6 +108,19 @@ const resizableOptions = {
         console.log(event.rect)
         console.log(event.target);
         var element = event.target;
+        // Ensure we have explicit dimensions before resize
+        element.style.width = document.defaultView.getComputedStyle(element).getPropertyValue("width");
+        element.style.height = document.defaultView.getComputedStyle(element).getPropertyValue("height");
+        // Save initial element and bounding rect dimensions for scale factor
+        element.dataset.initialWidth = element.style.width;
+        element.dataset.initialHeight = element.style.height;
+        const rect = element.getBoundingClientRect();
+        element.dataset.initialBoundingRectWidth = rect.width;
+        element.dataset.initialBoundingRectHeight = rect.height;
+        // store the center as the element has css `transform-origin: center center`
+        element.dataset.centerX = rect.left + rect.width / 2;
+        element.dataset.centerY = rect.top + rect.height / 2;
+        // TODO: I'm not sure this is necessary
         element.style.webkitTransform =
             element.style.transform =
                 'translate(' + parseFloat(element.dataset.x) + 'px, ' + parseFloat(element.dataset.y) + 'px) rotate(' + element.dataset.angle + 'rad)';
@@ -115,33 +128,38 @@ const resizableOptions = {
     onmove: function (event) {
         console.log('*****************')
         console.log('EVENT: resizemove')
-        function cos(a) {
-            return Math.cos(a);
-        }
-        function sin(a) {
-            return Math.sin(a);
-        }
         var element = event.target,
             x = (parseFloat(element.dataset.x) || 0),
             y = (parseFloat(element.dataset.y) || 0),
-            rect = event.rect,
-            bx = rect.width,
-            by = rect.height,
-            angle = (parseFloat(element.dataset.angle) || 0),
-            t = Math.abs(angle);
-        // consider switching bx and by based on what quadrant we're in
-        // update the element's style
-        element.style.width = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (bx * cos(t) - by * sin(t)) + 'px'
-        element.style.height = (1/(Math.pow(cos(t),2)-Math.pow(sin(t),2))) * (by * cos(t) - bx * sin(t)) + 'px'
-
-        // translate when resizing from top or left edges
-        x += event.deltaRect.left;
-        y += event.deltaRect.top;
+            angle = (parseFloat(element.dataset.angle) || 0)
+        var initialWidth = parseFloat(element.dataset.initialWidth)
+        var initialHeight = parseFloat(element.dataset.initialHeight)
+        var initialBRWidth = parseFloat(element.dataset.initialBoundingRectWidth)
+        var initialBRHeight = parseFloat(element.dataset.initialBoundingRectHeight)
+        var scaleFactor = 1;
+        var scaleFactorWidth = event.rect.width / initialBRWidth;
+        var scaleFactorHeight = event.rect.height / initialBRHeight;
+        // decide which dimension is changing more
+        if (Math.abs(1 - scaleFactorWidth) > Math.abs(1 - scaleFactorHeight)) {
+            scaleFactor = scaleFactorWidth;
+            console.log("CHANGING WIDTH BY: " + scaleFactorWidth);
+        }
+        else {
+            scaleFactor = scaleFactorHeight;
+            console.log("CHANGING HEIGHT BY: " + scaleFactorHeight);
+        }
+        var newWidth = initialWidth * scaleFactor;
+        var newHeight = initialHeight * scaleFactor;
+        // update the element's style - aspect ratio locked
+        element.style.width = newWidth + 'px';
+        element.style.height = newHeight + 'px';
+        // translate to account for scaling
+        x = (initialWidth/2) - (newWidth/2);
+        y = (initialHeight/2) - (newHeight/2);
         element.style.fontSize = (parseFloat(element.style.width) / 4) + 'px';
-        console.log('ELEMENT STYLE WIDTH/HEIGHT: ' + element.style.width + '/' + element.style.height)
-        console.log('EVENT RECT WIDTH/HEIGHT: ' + event.rect.width + '/' + event.rect.height)
-        // console.log('BOUNDING RECT WIDTH/HEIGHT: ' + rect.width + '/' + rect.height)
-        console.log('DELTA RECT:')
+        console.log('ELEMENT WIDTH/HEIGHT: ' + element.style.width + '/' + element.style.height)
+        console.log('EVENT WIDTH/HEIGHT: ' + event.rect.width + '/' + event.rect.height)
+        console.log('EVENT DELTA RECT:')
         console.log(event.deltaRect)
         console.log('TRANSFORM: ' + element.style.transform)
         element.dataset.x = x;
@@ -185,6 +203,7 @@ function setTrackingLayer(event) {
 
 function setTrackingLayerFor(element) {
     var trackingLayer = document.getElementById('brandTrackingLayer')
+    // Copy all the generated CSS to the tracking layer
     trackingLayer.style.cssText = document.defaultView.getComputedStyle(element, "").cssText;
     trackingLayer.style.zIndex = 16;
     trackingLayer.style.border = '2px dotted black';
