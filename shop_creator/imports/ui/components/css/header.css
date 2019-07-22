@@ -1,0 +1,15 @@
+.sign-up-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+}
+
+header {
+    color: white;
+    background: transparent;
+    padding: 10px 15px 15px 15px;
+    position: relative;
+    text-align: center;
+  }
+  
