@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="360px" viewBox="0 0 512 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>youtube</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M501.301263,132.327812 C495.412833,110.155937 478.063479,92.6940625 456.035068,86.768125 C416.106992,76 256,76 256,76 C256,76 95.8939454,76 55.9649317,86.768125 C33.9365211,92.695 16.5871673,110.155938 10.6987369,132.327812 C0,172.515625 0,256.36375 0,256.36375 C0,256.36375 0,340.211875 10.6987369,380.399688 C16.5871673,402.571563 33.9365211,419.305938 55.9649317,425.231875 C95.8939454,436 256,436 256,436 C256,436 416.106055,436 456.035068,425.231875 C478.063479,419.305937 495.412833,402.571563 501.301263,380.399687 C512,340.211875 512,256.36375 512,256.36375 C512,256.36375 512,172.515625 501.301263,132.327812 Z M203.636001,332.491562 L203.636001,180.235938 L337.453651,256.365625 L203.636001,332.491562 Z" id="path-1"></path>
+    </defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Brands" transform="translate(-39949.000000, -7444.000000)">
+            <g id="Row-1" transform="translate(20493.000000, 7368.000000)">
+                <g id="Brands/youtube" transform="translate(19456.000000, 0.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Mask" fill="#000000" fill-rule="nonzero" xlink:href="#path-1"></use>
+                    <g id="Color/White" mask="url(#mask-2)" fill="#FFFFFF" fill-rule="evenodd">
+                        <rect id="White" x="0" y="0" width="512" height="512"></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

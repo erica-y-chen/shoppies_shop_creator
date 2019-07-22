@@ -212,18 +212,10 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   min-height: 100%;
   background: transparent;
-}
-
-header {
-  color: white;
-  background: transparent;
-  padding: 20px 15px 15px 15px;
-  position: relative;
-  text-align: center;
 }
 
 #login-buttons {
@@ -232,7 +224,7 @@ header {
 
 #hashtag-shoppies {
   float: left;
-  width: 40%;
+  width: 20%;
 }
 
 h1 {

@@ -8,7 +8,7 @@ export default class Header extends Component {
           <div className="sign-up-header">
             <img id="hashtag-shoppies" src="images/hashtag_shoppies.png" alt="#shoppies" />
             <header>
-                    <h1>Empowering content creators to own their own brand</h1>
+                    <div className = "header-subtext">Empowering content creators to own their own brand</div>
             </header>
           </div>
         );

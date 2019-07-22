@@ -6,9 +6,9 @@ export default class InputField extends Component {
         return (
           // Import result is the URL of your image
           <div className="input-container">
-              <label for= {this.props.label}>{this.props.placeHolder}</label>
+              <label for= {this.props.name}>{this.props.label}</label>
               <input 
-                name = {this.props.label} 
+                name = {this.props.name} 
                 placeholder = {this.props.placeHolder} />
           </div>
         );
