@@ -1,7 +1,7 @@
 # shoppies_shop_creator
-*Shop Creator Infrastructure for Shoppies.co*
+**Shop Creator Infrastructure for Shoppies.co**
 
-Shoppies Creator Sign Up Page
+*Shoppies Creator Sign Up Page*
 
 Build Instructions: 
 
